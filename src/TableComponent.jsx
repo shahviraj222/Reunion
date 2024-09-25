@@ -26,6 +26,7 @@ const TableComponent = ({ data }) => {
     const [subcategoryFilter, setSubcategoryFilter] = useState('')
     const [uniqueSubcategories, setUniqueSubcategories] = useState([]);
     const uniqueCategories = [...new Set(data.map(item => item.category))];
+    const uniqueSubCategories = [...new Set(data.map(item => item.subcategory))];
 
     // Function to handle sorting
     const handleRequestSort = (property) => {
@@ -61,7 +62,8 @@ const TableComponent = ({ data }) => {
     useEffect(() => {
 
         if (categoryFilter == "") {
-            setUniqueSubcategories([]);
+            setUniqueSubcategories(uniqueSubCategories);
+            setSubcategoryFilter("")
         }
         else {
             const subcategories = Array.from(new Set(data.map((item) => {
