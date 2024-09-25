@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 
 const TableComponent = ({ data }) => {
-    // State hooks for sorting, pagination, and filters
+    // State hooks for sorting, pagination, and filters and category
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
     const [page, setPage] = useState(0);
@@ -25,6 +25,7 @@ const TableComponent = ({ data }) => {
     const [categoryFilter, setCategoryFilter] = useState('');
     const [subcategoryFilter, setSubcategoryFilter] = useState('')
     const [uniqueSubcategories, setUniqueSubcategories] = useState([]);
+    const uniqueCategories = [...new Set(data.map(item => item.category))];
 
     // Function to handle sorting
     const handleRequestSort = (property) => {
@@ -58,13 +59,18 @@ const TableComponent = ({ data }) => {
 
     // Update unique subcategories whenever the filtered data changes
     useEffect(() => {
-        const subcategories = Array.from(new Set(data.map((item) => {
-            if (item.category == categoryFilter) {
-                return item.subcategory
-            }
-        })));
-        console.log(subcategories)
-        setUniqueSubcategories(subcategories);
+
+        if (categoryFilter == "") {
+            setUniqueSubcategories([]);
+        }
+        else {
+            const subcategories = Array.from(new Set(data.map((item) => {
+                if (item.category == categoryFilter) {
+                    return item.subcategory
+                }
+            })));
+            setUniqueSubcategories(subcategories);
+        }
     }, [categoryFilter]);
 
 
@@ -83,7 +89,7 @@ const TableComponent = ({ data }) => {
                 style={{ marginBottom: '20px' }}
             />
 
-            {/* Category Filter */}
+            {/* Category Filter Dropdown */}
             <FormControl variant="outlined" style={{ marginBottom: '20px', minWidth: 120 }}>
                 <InputLabel>Category</InputLabel>
                 <Select
@@ -93,11 +99,11 @@ const TableComponent = ({ data }) => {
                     <MenuItem value="">
                         <em>All</em>
                     </MenuItem>
-                    {data.map((data) => <MenuItem value={data.category}>{data.category}</MenuItem>)}
+                    {uniqueCategories.map((data) => <MenuItem key={data} value={data}>{data}</MenuItem>)}
                 </Select>
             </FormControl>
 
-            {/* Subcategory Filter */}
+            {/* Subcategory Filter Dropdown */}
             <FormControl variant="outlined" style={{ marginBottom: '20px', minWidth: 130 }}>
                 <InputLabel>Subcategory</InputLabel>
                 <Select
@@ -107,7 +113,7 @@ const TableComponent = ({ data }) => {
                     <MenuItem value="">
                         <em>All</em>
                     </MenuItem>
-                    {uniqueSubcategories.map((data) => data ? <MenuItem value={data}>{data}</MenuItem> : [])}
+                    {uniqueSubcategories.map((data) => data ? <MenuItem key={data} value={data}>{data}</MenuItem> : [])}
                 </Select>
             </FormControl>
 
