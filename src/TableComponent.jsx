@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
     Table,
-    TableBody,
-    TableCell,
     TableContainer,
-    TableHead,
-    TableRow,
-    TableSortLabel,
     TablePagination,
-    TextField,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
 } from '@mui/material';
 
 import TableHeadComponent from './components/TableHeadComponent';
 import TableBodyComponent from './components/TableBodyComponent';
+import FilterComponents from './components/FilterComponents';
 
 const TableComponent = ({ data }) => {
     // State hooks for sorting, pagination, and filters and category
@@ -29,7 +20,7 @@ const TableComponent = ({ data }) => {
     const [subcategoryFilter, setSubcategoryFilter] = useState('')
     const [uniqueSubcategories, setUniqueSubcategories] = useState([]);
     const uniqueCategories = [...new Set(data.map(item => item.category))];
-    const uniqueSubCategories = [...new Set(data.map(item => item.subcategory))];
+    const uniqueSubCategory = [...new Set(data.map(item => item.subcategory))];
     const [visibleColumn, setVisibleColumn] = useState(['id', 'name', 'price', 'sale_price', 'createdAt', 'updatedAt'])
     // Function to handle sorting
     const handleRequestSort = (property) => {
@@ -47,6 +38,13 @@ const TableComponent = ({ data }) => {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+    };
+
+    // Function For deleting or adding the colum (Toggle)
+    const toggleColumn = (column) => {
+        setVisibleColumn(prev =>
+            prev.includes(column) ? prev.filter(col => col !== column) : [...prev, column]
+        );
     };
 
     // Filtering logic
@@ -68,7 +66,7 @@ const TableComponent = ({ data }) => {
     useEffect(() => {
 
         if (categoryFilter == "") {
-            setUniqueSubcategories(uniqueSubCategories);
+            setUniqueSubcategories(uniqueSubCategory);
             setSubcategoryFilter("")
         }
         else {
@@ -77,10 +75,22 @@ const TableComponent = ({ data }) => {
                     return item.subcategory
                 }
             })));
+            setSubcategoryFilter("")
             setUniqueSubcategories(subcategories);
         }
     }, [categoryFilter]);
 
+    // // you have to build the same filter like above 
+
+    // useEffect(() => {
+    //     if (subcategoryFilter == "") {
+
+    //     }
+    //     else {
+    //         // setCategoryFilter("Health")
+    //         // write a logic if you select the a sub category then the corresponding category selected
+    //     }
+    // }, [subcategoryFilter]);
 
     // Paginate filtered data
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -89,50 +99,35 @@ const TableComponent = ({ data }) => {
         <TableContainer>
 
             {/* Search Input */}
-            <TextField
-                label="Search"
-                variant="outlined"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ marginBottom: '20px' }}
+            <FilterComponents
+                setSearchTerm={setSearchTerm}
+                searchTerm={searchTerm}
+                categoryFilter={categoryFilter}
+                setCategoryFilter={setCategoryFilter}
+                uniqueCategories={uniqueCategories}
+                subcategoryFilter={subcategoryFilter}
+                setSubcategoryFilter={setSubcategoryFilter}
+                uniqueSubcategories={uniqueSubcategories}
+                toggleColumn={toggleColumn}
+                visibleColumn={visibleColumn}
             />
 
-            {/* Category Filter Dropdown */}
-            <FormControl variant="outlined" style={{ marginBottom: '20px', minWidth: 120 }}>
-                <InputLabel>Category</InputLabel>
-                <Select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                    <MenuItem value="">
-                        <em>All</em>
-                    </MenuItem>
-                    {uniqueCategories.map((data) => <MenuItem key={data} value={data}>{data}</MenuItem>)}
-                </Select>
-            </FormControl>
-
-            {/* Subcategory Filter Dropdown */}
-            <FormControl variant="outlined" style={{ marginBottom: '20px', minWidth: 130 }}>
-                <InputLabel>Subcategory</InputLabel>
-                <Select
-                    value={subcategoryFilter}
-                    onChange={(e) => setSubcategoryFilter(e.target.value)}
-                >
-                    <MenuItem value="">
-                        <em>All</em>
-                    </MenuItem>
-                    {uniqueSubcategories.map((data) => data ? <MenuItem key={data} value={data}>{data}</MenuItem> : [])}
-                </Select>
-            </FormControl>
-
-            {/* Table */}
             <Table>
+
+                {/* Heading Of Table */}
                 <TableHeadComponent
                     handleRequestSort={handleRequestSort}
                     order={order}
                     orderBy={orderBy}
-                    visibleColumn={visibleColumn} />
-                <TableBodyComponent visibleColumn={visibleColumn} paginatedData={paginatedData} />
+                    visibleColumn={visibleColumn}
+                />
+
+                {/* Body Data */}
+                <TableBodyComponent
+                    visibleColumn={visibleColumn}
+                    paginatedData={paginatedData}
+                />
+
             </Table>
 
             {/* Pagination */}

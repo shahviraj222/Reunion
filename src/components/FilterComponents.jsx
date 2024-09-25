@@ -1,20 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TableSortLabel,
-    TablePagination,
     TextField,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
+    Button,
+    Checkbox,
+    ListItemText,
+    Popover,
+    Typography,
 } from '@mui/material';
-function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCategoryFilter, uniqueCategories, subcategoryFilter, setSubcategoryFilter, uniqueSubcategories }) {
+function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCategoryFilter, uniqueCategories, subcategoryFilter, setSubcategoryFilter, uniqueSubcategories, toggleColumn, visibleColumn }) {
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
+    const handleToggleColumn = (column) => {
+        toggleColumn(column);
+    };
     return (
         <>
             <TextField
@@ -52,6 +65,39 @@ function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCatego
                     {uniqueSubcategories.map((data) => data ? <MenuItem key={data} value={data}>{data}</MenuItem> : [])}
                 </Select>
             </FormControl>
+
+            {/* Button to toggle column visibility */}
+            <Button variant="contained" onClick={handleClick}>
+                column
+            </Button>
+
+            {/* Popover for column selection */}
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <Typography sx={{ p: 2 }}>
+                    {['id', 'name', 'price', 'sale_price', 'createdAt', 'updatedAt'].map((column) => (
+                        <div key={column}>
+                            <Checkbox
+                                checked={visibleColumn.includes(column)}
+                                onChange={() => handleToggleColumn(column)}
+                            />
+                            <span>{column}</span>
+                        </div>
+                    ))}
+                </Typography>
+            </Popover>
         </>
     );
 }

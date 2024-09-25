@@ -16,7 +16,7 @@ function TableBodyComponent({ paginatedData, visibleColumn, }) {
                     <TableRow key={row.id}>
                         {visibleColumn.map((data) => {
                             return (
-                                <TableCell>
+                                <TableCell key={data.id}>
                                     {data === 'createdAt' || data === 'updatedAt' ? formatDate(row[data]) : row[data]}
                                 </TableCell>
                             )

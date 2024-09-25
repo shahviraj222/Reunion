@@ -14,6 +14,7 @@ function TableHeadComponent({ handleRequestSort, order, orderBy, visibleColumn }
                     return (
                         <TableCell key={data} sortDirection={orderBy === data ? order : false}>
                             <TableSortLabel
+                                key={data}
                                 active={orderBy === data}
                                 direction={orderBy === data ? order : 'asc'}
                                 onClick={() => handleRequestSort(data)}
