@@ -96,42 +96,39 @@ const TableComponent = ({ data }) => {
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <TableContainer>
-
-            {/* Search Input */}
-            <FilterComponents
-                setSearchTerm={setSearchTerm}
-                searchTerm={searchTerm}
-                categoryFilter={categoryFilter}
-                setCategoryFilter={setCategoryFilter}
-                uniqueCategories={uniqueCategories}
-                subcategoryFilter={subcategoryFilter}
-                setSubcategoryFilter={setSubcategoryFilter}
-                uniqueSubcategories={uniqueSubcategories}
-                toggleColumn={toggleColumn}
-                visibleColumn={visibleColumn}
-            />
-
-            <Table>
-
-                {/* Heading Of Table */}
-                <TableHeadComponent
-                    handleRequestSort={handleRequestSort}
-                    order={order}
-                    orderBy={orderBy}
+        <div className="p-6 bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 rounded-lg shadow-xl">
+            <div className="bg-white p-4 rounded-lg shadow-lg mb-4">
+                <FilterComponents
+                    setSearchTerm={setSearchTerm}
+                    searchTerm={searchTerm}
+                    categoryFilter={categoryFilter}
+                    setCategoryFilter={setCategoryFilter}
+                    uniqueCategories={uniqueCategories}
+                    subcategoryFilter={subcategoryFilter}
+                    setSubcategoryFilter={setSubcategoryFilter}
+                    uniqueSubcategories={uniqueSubcategories}
+                    toggleColumn={toggleColumn}
                     visibleColumn={visibleColumn}
                 />
+            </div>
 
-                {/* Body Data */}
-                <TableBodyComponent
-                    visibleColumn={visibleColumn}
-                    paginatedData={paginatedData}
-                />
+            <TableContainer className="rounded-lg shadow-lg border border-gray-200">
+                <Table className="min-w-full table-auto divide-y divide-gray-200">
+                    <TableHeadComponent
+                        handleRequestSort={handleRequestSort}
+                        order={order}
+                        orderBy={orderBy}
+                        visibleColumn={visibleColumn}
+                    />
+                    <TableBodyComponent
+                        visibleColumn={visibleColumn}
+                        paginatedData={paginatedData}
+                    />
+                </Table>
+            </TableContainer>
 
-            </Table>
-
-            {/* Pagination */}
             <TablePagination
+                className="mt-4 bg-white p-4 rounded-lg shadow-md"
                 rowsPerPageOptions={[10, 25, 50]}
                 component="div"
                 count={filteredData.length}
@@ -140,8 +137,7 @@ const TableComponent = ({ data }) => {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
-
-        </TableContainer>
+        </div>
     );
 };
 

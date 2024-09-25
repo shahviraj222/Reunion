@@ -11,19 +11,25 @@ function TableBodyComponent({ paginatedData, visibleColumn, }) {
     };
     return (
         <TableBody>
-            {paginatedData.map((row) => {
-                return (
-                    <TableRow key={row.id}>
-                        {visibleColumn.map((data) => {
-                            return (
-                                <TableCell key={data.id}>
-                                    {data === 'createdAt' || data === 'updatedAt' ? formatDate(row[data]) : row[data]}
-                                </TableCell>
-                            )
-                        })}
-                    </TableRow>)
-            })}
-        </TableBody >
+            {paginatedData.map((row, index) => (
+                <TableRow
+                    key={row.id}
+                    className={`bg-white even:bg-gray-50 hover:bg-blue-100 transition-colors duration-300 ${index % 2 === 0 ? 'even:bg-gray-50' : 'bg-white'
+                        }`}
+                >
+                    {visibleColumn.map((data) => (
+                        <TableCell
+                            key={data}
+                            className="px-6 py-3 text-gray-700 text-sm font-medium border-b border-gray-200"
+                        >
+                            {data === 'createdAt' || data === 'updatedAt'
+                                ? formatDate(row[data])
+                                : row[data]}
+                        </TableCell>
+                    ))}
+                </TableRow>
+            ))}
+        </TableBody>
     );
 }
 
