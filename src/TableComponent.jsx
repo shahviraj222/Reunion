@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
 import {
     Table,
     TableBody,
@@ -16,6 +15,9 @@ import {
     MenuItem,
 } from '@mui/material';
 
+import TableHeadComponent from './components/TableHeadComponent';
+import TableBodyComponent from './components/TableBodyComponent';
+
 const TableComponent = ({ data }) => {
     // State hooks for sorting, pagination, and filters and category
     const [order, setOrder] = useState('asc');
@@ -28,7 +30,7 @@ const TableComponent = ({ data }) => {
     const [uniqueSubcategories, setUniqueSubcategories] = useState([]);
     const uniqueCategories = [...new Set(data.map(item => item.category))];
     const uniqueSubCategories = [...new Set(data.map(item => item.subcategory))];
-
+    const [visibleColumn, setVisibleColumn] = useState(['id', 'name', 'price', 'sale_price', 'createdAt', 'updatedAt'])
     // Function to handle sorting
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -83,11 +85,6 @@ const TableComponent = ({ data }) => {
     // Paginate filtered data
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-    // Date Formate Funciton 
-    const formatDate = (dateString) => {
-        return format(new Date(dateString), 'dd MMM yyyy , HH:mm');
-    };
-
     return (
         <TableContainer>
 
@@ -130,80 +127,12 @@ const TableComponent = ({ data }) => {
 
             {/* Table */}
             <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell sortDirection={orderBy === 'id' ? order : false}>
-                            <TableSortLabel
-                                active={orderBy === 'id'}
-                                direction={orderBy === 'id' ? order : 'asc'}
-                                onClick={() => handleRequestSort('id')}
-                            >
-                                Id
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell sortDirection={orderBy === 'name' ? order : false}>
-                            <TableSortLabel
-                                active={orderBy === 'name'}
-                                direction={orderBy === 'name' ? order : 'asc'}
-                                onClick={() => handleRequestSort('name')}
-                            >
-                                Name
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell sortDirection={orderBy === 'price' ? order : false}>
-                            <TableSortLabel
-                                active={orderBy === 'price'}
-                                direction={orderBy === 'price' ? order : 'asc'}
-                                onClick={() => handleRequestSort('price')}
-                            >
-                                Price
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell sortDirection={orderBy === 'sale_price' ? order : false}>
-                            <TableSortLabel
-                                active={orderBy === 'sale_price'}
-                                direction={orderBy === 'sale_price' ? order : 'asc'}
-                                onClick={() => handleRequestSort('sale_price')}
-                            >
-                                Sale Price
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell sortDirection={orderBy === 'createdAt' ? order : false}>
-                            <TableSortLabel
-                                active={orderBy === 'createdAt'}
-                                direction={orderBy === 'createdAt' ? order : 'asc'}
-                                onClick={() => handleRequestSort('createdAt')}
-                            >
-                                Created At
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell sortDirection={orderBy === 'updatedAt' ? order : false}>
-                            <TableSortLabel
-                                active={orderBy === 'updatedAt'}
-                                direction={orderBy === 'updatedAt' ? order : 'asc'}
-                                onClick={() => handleRequestSort('updatedAt')}
-                            >
-                                Updated At
-                            </TableSortLabel>
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-
-                <TableBody>
-
-                    {paginatedData.map((row) => (
-                        <TableRow key={row.id}>
-                            <TableCell>{row.id}</TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.price}</TableCell>
-                            <TableCell>{row.sale_price}</TableCell>
-                            <TableCell>{formatDate(row.createdAt)}</TableCell>
-                            <TableCell>{formatDate(row.updatedAt)}</TableCell>
-                        </TableRow>
-                    ))}
-
-                </TableBody>
-
+                <TableHeadComponent
+                    handleRequestSort={handleRequestSort}
+                    order={order}
+                    orderBy={orderBy}
+                    visibleColumn={visibleColumn} />
+                <TableBodyComponent visibleColumn={visibleColumn} paginatedData={paginatedData} />
             </Table>
 
             {/* Pagination */}
