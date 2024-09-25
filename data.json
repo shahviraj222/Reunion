@@ -75,7 +75,8 @@
         "subcategory": "Aquarium",
         "createdAt": "2017-03-27T10:14:52.483+05:30",
         "updatedAt": "2017-03-27T10:14:52.483+05:30",
-        "price": 123.9
+        "price": 123.9,
+        "sale_price": 243.3
     },
     {
         "id": 9,
