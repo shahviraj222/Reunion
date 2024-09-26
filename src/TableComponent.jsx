@@ -22,6 +22,8 @@ const TableComponent = ({ data }) => {
     const uniqueCategories = [...new Set(data.map(item => item.category))];
     const uniqueSubCategory = [...new Set(data.map(item => item.subcategory))];
     const [visibleColumn, setVisibleColumn] = useState(['id', 'name', 'price', 'sale_price', 'createdAt', 'updatedAt'])
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [priceRange, setPriceRange] = useState([0, 1000]);
     // Function to handle sorting
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -40,6 +42,16 @@ const TableComponent = ({ data }) => {
         setPage(0);
     };
 
+    // Function to handle Date change
+    const handleChangeDateRange = (newDateRange) => {
+        setDateRange(newDateRange)
+    }
+
+    // Function to handle Price change
+    const handleChangePriceRange = (event, newPriceRange) => {
+        setPriceRange(newPriceRange)
+    }
+
     // Function For deleting or adding the colum (Toggle)
     const toggleColumn = (column) => {
         setVisibleColumn(prev =>
@@ -52,7 +64,10 @@ const TableComponent = ({ data }) => {
         .filter(item =>
             item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
             (categoryFilter ? item.category === categoryFilter : true) &&
-            (subcategoryFilter ? item.subcategory === subcategoryFilter : true)
+            (subcategoryFilter ? item.subcategory === subcategoryFilter : true) &&
+            (!dateRange[0] || new Date(item.createdAt) >= dateRange[0]) &&
+            (!dateRange[1] || new Date(item.createdAt) <= dateRange[1]) &&
+            item.price >= priceRange[0] && item.price <= priceRange[1]
         )
         .sort((a, b) => {
             const isAsc = order === 'asc';
@@ -109,6 +124,10 @@ const TableComponent = ({ data }) => {
                     uniqueSubcategories={uniqueSubcategories}
                     toggleColumn={toggleColumn}
                     visibleColumn={visibleColumn}
+                    dateRange={dateRange}
+                    priceRange={priceRange}
+                    handleChangeDateRange={handleChangeDateRange}
+                    handleChangePriceRange={handleChangePriceRange}
                 />
             </div>
 

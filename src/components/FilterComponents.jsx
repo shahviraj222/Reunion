@@ -9,8 +9,28 @@ import {
     Checkbox,
     Popover,
     Typography,
+    Slider,
 } from '@mui/material';
-function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCategoryFilter, uniqueCategories, subcategoryFilter, setSubcategoryFilter, uniqueSubcategories, toggleColumn, visibleColumn }) {
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFns';
+
+function FilterComponents({
+    setSearchTerm,
+    searchTerm,
+    categoryFilter,
+    setCategoryFilter,
+    uniqueCategories,
+    subcategoryFilter,
+    setSubcategoryFilter,
+    uniqueSubcategories,
+    toggleColumn,
+    visibleColumn,
+    dateRange,
+    priceRange,
+    handleChangeDateRange,
+    handleChangePriceRange,
+}) {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
@@ -27,25 +47,28 @@ function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCatego
     const handleToggleColumn = (column) => {
         toggleColumn(column);
     };
+
     return (
-        <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0 mb-6 p-4 bg-gray-100 rounded-lg shadow-md">
+        <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0 mb-6 p-6 bg-gray-50 rounded-lg shadow-lg">
             {/* Search Input */}
             <TextField
                 label="Search"
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="md:w-1/3 bg-white rounded-md shadow-sm"
+                className="md:w-1/4 bg-white rounded-md shadow-sm"
                 InputLabelProps={{ className: 'text-gray-600' }}
+                size="small"
             />
 
             {/* Category Filter Dropdown */}
-            <FormControl variant="outlined" className="md:w-1/4 bg-white rounded-md shadow-sm">
+            <FormControl variant="outlined" className="md:w-1/5 bg-white rounded-md shadow-sm">
                 <InputLabel className="text-gray-600">Category</InputLabel>
                 <Select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
                     className="text-gray-700"
+                    size="small"
                 >
                     <MenuItem value="">
                         <em>All</em>
@@ -59,12 +82,13 @@ function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCatego
             </FormControl>
 
             {/* Subcategory Filter Dropdown */}
-            <FormControl variant="outlined" className="md:w-1/4 bg-white rounded-md shadow-sm">
+            <FormControl variant="outlined" className="md:w-1/5 bg-white rounded-md shadow-sm">
                 <InputLabel className="text-gray-600">Subcategory</InputLabel>
                 <Select
                     value={subcategoryFilter}
                     onChange={(e) => setSubcategoryFilter(e.target.value)}
                     className="text-gray-700"
+                    size="small"
                 >
                     <MenuItem value="">
                         <em>All</em>
@@ -79,13 +103,32 @@ function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCatego
                 </Select>
             </FormControl>
 
+
+
+            {/* Price Range Slider */}
+            <div className="md:w-1/4 flex flex-col items-start p-2 space-y-1">
+
+                <Slider
+                    value={priceRange}
+                    onChange={handleChangePriceRange}
+                    min={0}
+                    max={100}
+                    size="small"
+                />
+                <div className="flex justify-between w-full text-gray-700 text-xs">
+                    <Typography>${priceRange[0]}</Typography>
+                    <Typography>${priceRange[1]}</Typography>
+                </div>
+            </div>
+
+
             {/* Button to toggle column visibility */}
             <Button
-                variant="contained"
+                variant="outlined"
+                size='small'
                 onClick={handleClick}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md"
             >
-                Column Hide
+                Column Visible
             </Button>
 
             {/* Popover for column selection */}
@@ -104,7 +147,7 @@ function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCatego
                 }}
                 className="mt-2"
             >
-                <Typography className="p-4">
+                <Typography className="p-4 text-gray-700">
                     {['id', 'name', 'price', 'sale_price', 'createdAt', 'updatedAt'].map((column) => (
                         <div key={column} className="flex items-center mb-2">
                             <Checkbox
@@ -112,11 +155,27 @@ function FilterComponents({ setSearchTerm, searchTerm, categoryFilter, setCatego
                                 onChange={() => handleToggleColumn(column)}
                                 className="text-blue-500"
                             />
-                            <span className="ml-2">{column}</span>
+                            <span className="ml-2 text-sm">{column}</span>
                         </div>
                     ))}
                 </Typography>
             </Popover>
+
+            {/* Date Range Picker */}
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateRangePicker
+                    startText="Start Date"
+                    endText="End Date"
+                    value={dateRange}
+                    onChange={handleChangeDateRange}
+                    renderInput={(startProps, endProps) => (
+                        <div className="flex gap-2">
+                            <TextField {...startProps} className="bg-white rounded-md shadow-sm" size="small" />
+                            <TextField {...endProps} className="bg-white rounded-md shadow-sm" size="small" />
+                        </div>
+                    )}
+                />
+            </LocalizationProvider>
         </div>
     );
 }
